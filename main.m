@@ -7,16 +7,16 @@ clear; clf;
 
 N=200;      %number of grid cells
 T=0.25;     %numerical time
-CFL=0.5;    %used as a relation between dt and dx
+CFL=0.5;    %used as a relation between dt and dx --- represents CFL-factor
 a=0; b=1;  %start and end of the space domain x (1D)
 gamma=1.4;  % ----
 
 u0=cell(3,1);           %define 3 rows of u0 for the initial condition
 
 %using initial condition 1
-u0{1}= @(x)     1.*(x>=0 & x<=0.25) +   0.125.*(x>0.25 & x<=1);
-u0{2}= @(x)     u0{1}(x).*(0.*(x>=0 & x<=0.25) +   0.*(x>0.25 & x<=1));
-u0{3}= @(x)     (u0{2}(x).^2)./(2*u0{1}(x))  +   (1/(gamma-1)).*(1*(x>=0 & x<=0.25) +   0.1.*(x>0.25 & x<=1));
+%u0{1}= @(x)     1.*(x>=0 & x<=0.25) +   0.125.*(x>0.25 & x<=1);
+%u0{2}= @(x)     u0{1}(x).*(0.*(x>=0 & x<=0.25) +   0.*(x>0.25 & x<=1));
+%u0{3}= @(x)     (u0{2}(x).^2)./(2*u0{1}(x))  +   (1/(gamma-1)).*(1*(x>=0 & x<=0.25) +   0.1.*(x>0.25 & x<=1));
 
 %using initial condition 2
 u0{1}= @(x)     1 .* and(x>=0, x<=0.25)   +     1 .* and(x>0.25, x<=1);
@@ -49,8 +49,7 @@ function u=solve(N, a, b, T, CFL, u0, gamma)
         if t+dt > T         %loop termination
             break; 
         end
-        %f1= NumF(u(:,1,j),u(:,2,j),lambda,gamma);
-        %f2= NumF(u(:,1,j),u(:,1,j),lambda,gamma);
+        
         u(:,1,j+1) = u(:,1,j) - (dt/dx) .* (    NumF(u(:,1,j),u(:,2,j),lambda,gamma)-NumF(u(:,1,j),u(:,1,j),lambda,gamma)  ) ;
         for i=2:N-1
             u(:,i,j+1) = u(:,i,j) - (dt/dx) .* (    NumF(u(:,i,j),u(:,i+1,j),lambda,gamma)-NumF(u(:,i-1,j),u(:,i,j),lambda,gamma)  ); 
